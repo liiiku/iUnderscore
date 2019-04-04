@@ -45,6 +45,40 @@
     return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX
   }
 
+  /**
+   * 数组扁平化
+   * @param {*} input 要处理的数组
+   * @param {*} shallow 是否只扁平一层
+   * @param {*} strict 是否严格处理元素 也就是如果不是数组的话，怎么处理
+   * @param {*} output 输出
+   */
+  function flatten(input, shallow, strict, output) {
+    output = output || []
+    var idx = output.length
+
+    for (var i = 0, len = input.length; i < len; i++) {
+      var value = input[i]
+
+      if (Array.isArray(value)) {
+        if (shallow) {
+          var j = 0, length = value.length
+          while (j < length) output[idx++] = value[j++]
+        } else {
+          flatten(value, shallow, strict, output)
+          idx = output.length
+        }
+      } else if (!strict) {
+        output[idx++] = value
+      }
+    }
+
+    return output
+  }
+
+  _.flatten = function(array, shallow) {
+    return flatten(array, shallow, false)
+  }
+
   // 遍历数组和对象
   _.each = function(obj, callback) {
     var length, i = 0
@@ -97,9 +131,11 @@
   // isArrayLike(obj)
 })()
 
+var arr = [1, 2, [3, [4, 5]]]
 // console.log(_([1, 2, 3]))
 // _.log('123')
 // _('123').log()
 // _([1, 2, 3]).each(function(index, item) {console.log(index, item)})
 // _.each([1, 2, 3], function(index, item) {console.log(index, item)})
 _.each({length: 0, b: 2}, function(index, item) {console.log(105, item)})
+console.log(_.flatten(arr, true))
